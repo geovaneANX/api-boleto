@@ -1,7 +1,7 @@
 import { modulo10, modulo11Arrecadacao } from './modulos.js';
 import { convertToBoletoArrecadacao } from './conversores.js';
 
-function boletoArrecadacaoCodigoBarras(barCode) {
+function validaCodigoBarras(barCode) {
     if (!/^[0-9]{44}$/.test(barCode) || Number(barCode[0]) !== 8)
         return false;
 
@@ -24,11 +24,11 @@ function boletoArrecadacaoCodigoBarras(barCode) {
     return modulo(bloco) === DV;
 }
 
-function boletoArrecadacaoLinhaDigitavel(barCode) {
+function validaLinhaDigitavel(barCode) {
     if (!/^[0-9]{48}$/.test(barCode) || Number(barCode[0]) !== 8) 
         return false;
   
-    const validDV = boletoArrecadacaoCodigoBarras(convertToBoletoArrecadacao(barCode));
+    const validDV = validaCodigoBarras(convertToBoletoArrecadacao(barCode));
   
     const codigoMoeda = Number(barCode[2]);
     
@@ -59,28 +59,27 @@ export function isValidBoletoArrecacao(barCode) {
     let barCodeSemDV = barCode;
 
     if (barCode.length === 44) {
-        isValid = boletoArrecadacaoCodigoBarras(barCode);
+        isValid = validaCodigoBarras(barCode);
     }
   
     if (barCode.length === 48) {
-        isValid = boletoArrecadacaoLinhaDigitavel(barCode);
+        isValid = validaLinhaDigitavel(barCode);
         barCodeSemDV = removeDV(barCode);
     }
 
     if (isValid) {
         const valor = barCodeSemDV.substring(5, 15);
         const data = barCodeSemDV.substring(19, 27);
+
+        //Primeiros 8 dígitos a do campo livre
         const vencimento = data.substring(6,8) + '/' +
                            data.substring(4,6) + '/' +
                            data.substring(0,4);
-
 
         let patternData = /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/;
         if(!patternData.test(vencimento)){
             vencimento = "" 
         }
-    
-        console.log('-->', data, ' - ', vencimento)
 
         return {
             barCode,

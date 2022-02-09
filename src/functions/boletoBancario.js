@@ -1,7 +1,7 @@
 import { modulo10, modulo11Bancario } from "./modulos.js";
 import { convertToBoletoBancario } from "./conversores.js";
 
-function boletoBancarioCodigoBarras(barCode) {
+function validaCodigoBarras(barCode) {
     if (!/^[0-9]{44}$/.test(barCode)) 
         return false;
 
@@ -11,7 +11,7 @@ function boletoBancarioCodigoBarras(barCode) {
     return modulo11Bancario(bloco) === Number(DV);
 }
 
-function boletoBancarioLinhaDigitavel(barCode) {
+function validaLinhaDigitavel(barCode) {
     if (!/^[0-9]{47}$/.test(barCode))
         return false;
 
@@ -31,7 +31,7 @@ function boletoBancarioLinhaDigitavel(barCode) {
     ];
 
     const validBlocos = blocos.every(e => modulo10(e.num) === Number(e.DV))
-    const validDV = boletoBancarioCodigoBarras(convertToBoletoBancario(barCode));
+    const validDV = validaCodigoBarras(convertToBoletoBancario(barCode));
     return validBlocos && validDV;
 }
 
@@ -39,10 +39,10 @@ export function isValidBoletoBancario(barCode) {
     let isValid = false;
     
     if (barCode.length === 44) {
-        isValid = boletoBancarioCodigoBarras(barCode);
+        isValid = validaCodigoBarras(barCode);
     }
     else if (barCode.length === 47) {
-        isValid = boletoBancarioLinhaDigitavel(barCode);
+        isValid = validaLinhaDigitavel(barCode);
     }
 
     const valor = barCode.substring(37, 47);

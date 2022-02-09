@@ -1,5 +1,5 @@
 /*
-  Regras de validação do Modulo 10 e 11
+  Regras de validação do Modulo 10 e 11(Bancario/Arrecadação)
 */
 export function modulo10(bloco) {
 	const codigo = bloco.split('').reverse();
